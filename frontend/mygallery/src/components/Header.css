@@ -1,0 +1,29 @@
+.header {
+  background-color: #333;
+  padding-top: 15px;
+  height: 40px;
+  color: white;
+  position: fixed; /* Make the header stick */
+  top: 0;          /* Position at the top */
+  width: 100%;     /* Occupy full width */
+  z-index: 1000;   /* Ensure it's above other content */
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  justify-content: flex-start; /* Align items to the left */
+  margin: 0;
+  padding: 0;
+  padding-left: 20px; /* Add some padding from the left edge */
+}
+
+.nav-item {
+  margin: 0 15px;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
