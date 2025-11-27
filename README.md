@@ -79,7 +79,7 @@
 - Board (게시글)
 - BoardImage (게시글 이미지)
 - RefreshToken (Redis)
-
+- Social_account (소셜로그인 담당)
 ---
 
 ## 🔁 API 흐름 요약
