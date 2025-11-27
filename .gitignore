@@ -68,4 +68,9 @@ out/
 atlassian-ide-plugin.xml
 
 # Cursive Clojure plugin
+# 민감정보 무시
 application.properties
+
+# Gemini 유닛 무시
+GEMINI.md
+**/gemini.md
