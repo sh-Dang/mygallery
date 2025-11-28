@@ -1,0 +1,52 @@
+ CREATE TABLE user (   user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+username VARCHAR(50) ,
+password VARCHAR(255),
+email VARCHAR(100) UNIQUE,
+role VARCHAR(20) DEFAULT 'ROLE_USER',
+account_non_locked BOOLEAN DEFAULT TRUE,
+login_type VARCHAR(20) NOT NULL, -- ✅ LOCAL / GOOGLE / KAKAO / NAVER
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE social_accounts (
+  social_account_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  provider VARCHAR(20) NOT NULL,     -- GOOGLE, KAKAO, NAVER
+  provider_id VARCHAR(100) NOT NULL, -- 소셜에서 내려주는 고유 ID
+  user_id BIGINT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (provider, provider_id),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE boards (
+  board_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  content TEXT NOT NULL,
+  writer_id BIGINT NOT NULL,
+  view_count INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (writer_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE board_images (
+  image_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  board_id BIGINT NOT NULL,
+  origin_name VARCHAR(255),
+  saved_name VARCHAR(255),
+  image_url VARCHAR(500),
+  file_size BIGINT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (board_id) REFERENCES boards(board_id) ON DELETE CASCADE
+);
+
+CREATE TABLE comments (
+  comment_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  board_id BIGINT NOT NULL,
+  writer_id BIGINT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (board_id) REFERENCES boards(board_id) ON DELETE CASCADE,
+  FOREIGN KEY (writer_id) REFERENCES users(user_id)
+);
