@@ -1,6 +1,6 @@
 package com.sh.mygallery.service;
 
-import com.sh.mygallery.domain.User;
+import com.sh.mygallery.domain.Users;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ public class UserService {
      * @author 이세형
      * @since 2025/11/28
      */
-    public Map<User,Long> register(){
+    public Map<Users,Long> register(){
         return  null;
     }
 
@@ -24,7 +24,7 @@ public class UserService {
      * @author 이세형
      * @since 2025/11/28
      */
-    public  Map<User,String> login(String username,String password){
+    public  Map<Users,String> login(String username,String password){
         return  null;
     }
 }
