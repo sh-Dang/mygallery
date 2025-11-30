@@ -1,4 +1,4 @@
-package com.sh.mygallery.domain;
+package com.sh.mygallery.user.domain;
 
 import jakarta.persistence.*;
 
@@ -10,7 +10,8 @@ import jakarta.persistence.*;
  * @since 2025/11/29
  */
 @Entity
-public class Users {
+@Table(name="users")
+public class User {
     /**
      * 기본 키(PK)로 사용되는 식별자(ID) 필드.
      * Id
