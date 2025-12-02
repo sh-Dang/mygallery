@@ -2,6 +2,10 @@ package com.sh.mygallery.user.domain;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 
 /**
  * Users table에 매칭할 엔터티 선언
@@ -32,6 +36,28 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")
     private long userId;
-
-
+    // 유저 이름
+    @Column(name="username")
+    private String username;
+    // 비밀번호
+    @Column(name="password")
+    private String password;
+    // 유저 email
+    @Column(name="email")
+    private String email;
+    // 유저 역할(user/admin 등)
+    @Column(name="role")
+    private String role;
+    // softdelete를 위한 계정 상태 컬럼
+    @Column(name="account_non_locked")
+    private Boolean accountNonLocked;
+    // 로그인타입(사이트/sns)
+    @Column(name="login_type")
+    private Boolean loginType;
+    // 생성(가입)날짜
+    @Column(name="created_at")
+    private LocalDateTime createdAt;
+    // 최종 수정 날짜
+    @Column(name="updated_at")
+    private LocalDateTime updatedAt;
 }
