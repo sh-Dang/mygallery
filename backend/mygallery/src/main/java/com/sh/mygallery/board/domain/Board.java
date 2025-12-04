@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * boards table에 매칭할 엔터티 선언
  *
  * @author 이세형
- * @since 2025/11/30
+ * @since 2025-11-30
  */
 @Entity
 @Table(name="boards")

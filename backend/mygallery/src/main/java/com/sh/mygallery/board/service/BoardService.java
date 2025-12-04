@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
  * controller의 요청을 받아 올바른 Repository로 요청을 전달해 주기위한 객체
  *
  * @author 이세형
- * @since 2025/11/30
+ * @since 2025-11-30
  */
 @Service
 @RequiredArgsConstructor

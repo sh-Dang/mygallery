@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
  * Boards관련된 Service를 찾아 명령하는 Controller
  *
  * @author 이세형
- * @since 2025/11/30
+ * @since 2025-11-30
  */
 @Controller
 @RequiredArgsConstructor

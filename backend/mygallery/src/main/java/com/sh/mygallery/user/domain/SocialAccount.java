@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * social_accounts table에 매칭할 엔터티 선언
  *
  * @author 이세형
- * @since 2025/12/02
+ * @since 2025-12-02
  */
 @Entity
 @Table(name="social_accounts")

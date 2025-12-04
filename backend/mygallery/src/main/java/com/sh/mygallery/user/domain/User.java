@@ -30,7 +30,7 @@ public class User {
      *  - IDENTITY 전략은 기본 키를 DB에 의존하므로,
      *    대량 배치 INSERT 성능에는 불리할 수 있다.
      *  - 대부분의 웹 서비스 CRUD 환경에서는 가장 안정적이고 많이 사용된다.
-     * @since 2025/11/29
+     * @since 2025-11-29
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,7 +11,7 @@ import java.util.Map;
  * controller의 요청을 받아 올바른 Repository로 요청을 전달해 주기위한 객체
  *
  * @author 이세형
- * @since 2025/11/28
+ * @since 2025-11-28
  */
 @Service
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class UserService {
      * 유저의 회원가입을 담당하는 메서드
      *
      * @author 이세형
-     * @since 2025/11/28
+     * @since 2025-11-28
      */
     public Map<User,Long> register(){
         return  null;
@@ -32,7 +32,7 @@ public class UserService {
      * 유저의 로그인을 담당하는 메서드
      *
      * @author 이세형
-     * @since 2025/11/28
+     * @since 2025-11-28
      */
     public  Map<User,String> login(String username, String password){
         return  null;

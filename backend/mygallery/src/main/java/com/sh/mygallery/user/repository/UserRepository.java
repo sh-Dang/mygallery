@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * 직접 Users Table에 접근하여 database를 다룰 객체
  *
  * @author 이세형
- * @since 2025/11/30
+ * @since 2025-11-30
  */
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
