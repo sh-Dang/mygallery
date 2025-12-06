@@ -1,8 +1,11 @@
 package com.sh.mygallery.board.repository;
 
 import com.sh.mygallery.board.domain.Board;
+import com.sh.mygallery.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * 직접 Boards Table에 접근하여 database를 다룰 객체
@@ -13,4 +16,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long> {
 
+    // 특정 사용자(userId)가 작성한 모든 게시글 조회하는 메서드
+    List<Board> findByUserId(Long userId);
 }

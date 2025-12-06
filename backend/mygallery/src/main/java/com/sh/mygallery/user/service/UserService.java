@@ -4,6 +4,7 @@ import com.sh.mygallery.user.domain.User;
 import com.sh.mygallery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
 
@@ -35,6 +36,7 @@ public class UserService {
      * @since 2025-11-28
      */
     public  Map<User,String> login(String username, String password){
+        userRepository.findByUsername(username);
         return  null;
     }
 }
