@@ -37,7 +37,7 @@ public class JwtUtil {
     }
 
     // accessToken을 생성하는 메서드
-    private String createAccessToken(String subject){
+    public String createAccessToken(String subject){
         String accessToken = Jwts.builder() // 토큰을 만들기 위한 빌더 객체 생성
                 .setSubject(subject) // 토큰의 주체(subject)를 설정(보통 사용자 ID나 이름)
                 .setIssuedAt(new Date()) // 토큰 발행 시간을 현재 시간으로 설정

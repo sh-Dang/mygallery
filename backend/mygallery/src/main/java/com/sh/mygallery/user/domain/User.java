@@ -1,6 +1,7 @@
 package com.sh.mygallery.user.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.Date;
  */
 @Entity // 데이터베이스에 존재하는 엔터티임을 명시(JPA)
 @Table(name="users") // 테이블 명을 직접 입력해 매핑
+@Getter
 public class User {
     /**
      * 기본 키(PK)로 사용되는 식별자(ID) 필드.
