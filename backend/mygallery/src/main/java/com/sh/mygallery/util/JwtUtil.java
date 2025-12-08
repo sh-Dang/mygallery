@@ -55,7 +55,7 @@ public class JwtUtil {
     }
 
     // refreshToken을 생성하는 메서드
-    private String createRefreshToken(String subject){
+    public String createRefreshToken(String subject){
         String refreshToken = Jwts.builder() // 토큰을 만들기 위한 빌더 객체 생성
                 .setSubject(subject) // 사용자 식별용 (또는 UUID 사용 가능)
                 .setId(UUID.randomUUID().toString()) // 토큰 고유 ID (jti) - DB에 값을 저장하여 탈취를 방지할 수 있음

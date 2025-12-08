@@ -50,7 +50,7 @@ public class UserService {
      * @author 이세형
      * @since 2025-12-07
      */
-    public String login(String email, String password) {
+    public Map<String,String> login(String email, String password) {
         // email을 기준으로 DB에서 User 엔티티 탐색.
         // 값이 없으면 UserNotFoundException을 발생시켜 로그인 실패 처리.
         User user = userRepository.findByEmail(email)
@@ -65,6 +65,13 @@ public class UserService {
 
         // 모든 검증이 통과된 경우, username을 기반으로 JWT Access Token 생성.
         // 이 토큰은 이후 인증된 사용자임을 증명하는 데 사용됨.
-        return jwtUtil.createAccessToken(email);
+//        return jwtUtil.createAccessToken(email);
+        String accessToken = jwtUtil.createAccessToken(email);
+        String refreshToke = jwtUtil.createRefreshToken(email);
+
+        return Map.of(
+                "accessToken", accessToken,
+                "refreshToken", refreshToke
+        );
     }
 }

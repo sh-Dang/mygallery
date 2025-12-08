@@ -48,7 +48,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/user/**") //이 SecurityFilterChain이 "/user/**" 경로에만 적용되도록 매칭 설정
+//                .securityMatcher("/user/**") //이 SecurityFilterChain이 "/user/**" 경로에만 적용되도록 매칭 설정
                 // CSRF는 브라우저 자동 쿠키 전송을 악용한 공격을 막는 기능이므로
                 // JWT는 쿠키가 아닌 Authorization 헤더를 사용하므로 CSRF 검증이 불필요하여 disable해야 함
                 .csrf(csrf -> csrf.disable())
