@@ -6,10 +6,7 @@ import com.sh.mygallery.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +18,7 @@ import java.util.List;
  */
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/boards")
 public class BoardController {
     // 알맞은 service객체 보유
     private final BoardService boardService;
@@ -32,8 +30,9 @@ public class BoardController {
      * @return 생성된 Board 정보를 ResponseEntity로 래핑하여 반환
      */
     @PostMapping
-    public ResponseEntity<Board> write(){
-        return null;
+    public ResponseEntity<Board> write(@RequestBody Board board) {
+        Board createdBoard = boardService.write(board);
+        return ResponseEntity.ok(createdBoard);
     }
 
     /**
@@ -44,7 +43,20 @@ public class BoardController {
      */
     @GetMapping
     public ResponseEntity<List<Board>> getBoards(){
-        return null;
+        List<Board> boards = boardService.getAllBoards();
+        return ResponseEntity.ok(boards);
+    }
+
+    /**
+     * 특정 사용자의 게시글 목록을 조회하는 메서드
+     *
+     * @param userId 사용자 ID
+     * @return 해당 사용자가 작성한 게시글 리스트
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Board>> getBoardsByUserId(@PathVariable Long userId) {
+        List<Board> boards = boardService.getBoardsByUserId(userId);
+        return ResponseEntity.ok(boards);
     }
 
     /**
@@ -53,9 +65,10 @@ public class BoardController {
      *
      * @return 수정된 Board 정보를 ResponseEntity로 래핑하여 반환
      */
-    @PutMapping
-    public ResponseEntity<Board> update(){
-        return null;
+    @PutMapping("/{id}")
+    public ResponseEntity<Board> update(@PathVariable Long id, @RequestBody Board board){
+        Board updatedBoard = boardService.update(id, board);
+        return ResponseEntity.ok(updatedBoard);
     }
 
     /**
@@ -64,8 +77,9 @@ public class BoardController {
      *
      * @return 삭제 성공 여부를 포함한 응답
      */
-    @DeleteMapping
-    public ResponseEntity<Void> delete(){
-        return null;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        boardService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -2,8 +2,8 @@ package com.sh.mygallery.board.service;
 
 import com.sh.mygallery.board.domain.Board;
 import com.sh.mygallery.board.repository.BoardRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +36,47 @@ public class BoardService {
      * @return 사용자가 작성한 게시글 목록
      */
     public List<Board> getBoardsByUserId(Long userId) {
-        return boardRepository.findByUserId(userId);
+        return boardRepository.findByUserUserId(userId);
+    }
+
+    /**
+     * 새로운 게시글을 작성하는 메서드
+     *
+     * @param board 작성할 게시글 정보
+     * @return 저장된 게시글
+     */
+    public Board write(Board board){
+        return boardRepository.save(board);
+    }
+
+    /**
+     * 기존 게시글을 수정하는 메서드
+     *
+     * @param id 수정할 게시글 ID
+     * @param board 수정할 내용
+     * @return 수정된 게시글
+     */
+    @Transactional
+    public Board update(Long id, Board board) {
+        Board existingBoard = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다. id=" + id));
+        existingBoard.setTitle(board.getTitle());
+        existingBoard.setContent(board.getContent());
+
+        return boardRepository.save(existingBoard);
+    }
+
+    /**
+     * 게시글을 삭제하는 메서드
+     *
+     * @param id 삭제할 게시글 ID
+     */
+    @Transactional
+    public void delete(Long id) {
+        if (!boardRepository.existsById(id)) {
+            throw new IllegalArgumentException("해당 게시글을 찾을 수 없습니다. id=" + id);
+        }
+        boardRepository.deleteById(id);
     }
 }
+

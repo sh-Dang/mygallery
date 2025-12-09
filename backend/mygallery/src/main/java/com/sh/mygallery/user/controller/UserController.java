@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @RestController
 @RequiredArgsConstructor //Bean 자동주입
-@RequestMapping("/user") // 유저로 들어가는 모든 요청은 '/user'로 시작되도록 매핑
+@RequestMapping("/users") // 유저로 들어가는 모든 요청은 '/user'로 시작되도록 매핑
 public class UserController {
     // 알맞은 service객체 보유
     private final UserService userService;

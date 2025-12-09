@@ -17,5 +17,5 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board,Long> {
 
     // 특정 사용자(userId)가 작성한 모든 게시글 조회하는 메서드
-    List<Board> findByUserId(Long userId);
+    List<Board> findByUserUserId(Long userId);
 }
