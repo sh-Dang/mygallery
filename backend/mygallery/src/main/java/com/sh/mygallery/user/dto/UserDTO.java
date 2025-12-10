@@ -11,6 +11,13 @@ import lombok.Setter;
  */
 public class UserDTO {
 
+    @Getter
+    public static class UserRegisterRequest{
+        private String username;
+        private String password;
+        private String email;
+    }
+
     // UserDTO는 직관적이지 않은 클래스명이므로
     // 내부 클래스를 통해 각 요청/응답 DTO를 분리하여 사용하는 방식을 택함
     @Getter

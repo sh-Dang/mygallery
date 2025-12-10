@@ -7,5 +7,6 @@ package com.sh.mygallery.user.exception;
  * @since 2025-11-30
  */
 public class UserException extends RuntimeException {
-
+    public UserException(String s) {
+    }
 }

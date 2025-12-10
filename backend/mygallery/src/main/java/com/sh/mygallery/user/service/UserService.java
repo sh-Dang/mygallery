@@ -1,6 +1,8 @@
 package com.sh.mygallery.user.service;
 
 import com.sh.mygallery.user.domain.User;
+import com.sh.mygallery.user.dto.UserDTO;
+import com.sh.mygallery.user.exception.UserException;
 import com.sh.mygallery.user.repository.UserRepository;
 import com.sh.mygallery.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * controller의 요청을 받아 올바른 Repository로 요청을 전달해 주기위한 객체
@@ -31,8 +35,29 @@ public class UserService {
      * @author 이세형
      * @since 2025-11-28
      */
-    public Map<User,Long> register(){
-        return  null;
+    public User register(UserDTO.UserRegisterRequest userRegisterRequest){
+        // 이메일 중복 확인
+        Optional<User> existingUser = userRepository.findByEmail(userRegisterRequest.getEmail());
+        if (existingUser.isPresent()) {
+            throw new UserException("이미 가입되어 있는 이메일입니다.");
+        }
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(userRegisterRequest.getPassword());
+
+        // User 객체 생성 및 저장
+        User newUser = User.builder()
+                .username(userRegisterRequest.getUsername())
+                .password(encodedPassword)
+                .email(userRegisterRequest.getEmail())
+                .role("ROLE_USER") // 기본 역할 설정
+                .accountNonLocked(true) // 계정 잠금 여부 (기본값 true)
+                .loginType(false) // 사이트 로그인 (false: 사이트, true: SNS)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        return userRepository.save(newUser);
     }
 
     /**

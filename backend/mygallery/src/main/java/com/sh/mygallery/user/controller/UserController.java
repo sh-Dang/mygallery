@@ -1,9 +1,11 @@
 package com.sh.mygallery.user.controller;
 
+import com.sh.mygallery.user.domain.User;
 import com.sh.mygallery.user.dto.UserDTO;
 import com.sh.mygallery.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,12 +31,20 @@ public class UserController {
     /**
      * 유저의 회원가입을 담당하는 메서드
      *
+     * <p>클라이언트로부터 UserRegisterRequest(JSON)를 전달받아
+     * userService.register(...)를 통해 실제 사용자 생성 비즈니스 로직을 수행,
+     * 이후 정상적으로 생성된 User 엔티티를 HTTP 201(Created) 상태코드와 함께 반환</p>
+     *
+     * @param registerRequest 회원가입에 필요한 데이터로 생성된 DTO
      * @author 이세형
      * @since 2025-11-28
      */
     @PostMapping("/register")
-    public void register(){
-        userService.register();
+    public ResponseEntity<User> register(@RequestBody UserDTO.UserRegisterRequest registerRequest){
+        // front에서 받아온 사용자 데이터 생성 및 저장
+        User registeredUser = userService.register(registerRequest);
+        // 생성된 사용자 정보를 담아 201(CREATED)반환
+        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
     /**
@@ -59,7 +69,7 @@ public class UserController {
         // 비즈니스 로직을 처리하는 Service에서 Cookie를 다룰경우 의존성이 높아져 MVC 패턴의 규칙성이 꺠진다고 볼 수 있기 떄문.
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)          // https 환경에서만 사용 ★ 실서비스 필수
+                .secure(true)          // https 환경에서만 사용, 실서비스 필수
                 .path("/")
                 .sameSite("None")      // cross-site 허용 (프론트 localhost 개발 시 필요)
                 .maxAge(7 * 24 * 60 * 60) // 7일
