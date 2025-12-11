@@ -71,7 +71,7 @@ public class UserService {
      *
      * @param email 로그인 시도 중인 사용자의 식별자(이메일)
      * @param password 클라이언트가 전달한 비밀번호(문자 그대로)
-     * @return 생성된 JWT Access Token 문자열
+     * @return 생성된 JWT accessToken과 refreshToken을 담은 Map<String, String>
      * @throws UsernameNotFoundException username에 해당하는 사용자가 없을 경우
      * @throws BadCredentialsException 비밀번호가 저장된 해시와 일치하지 않을 경우
      * @author 이세형

@@ -92,6 +92,7 @@ public class JwtUtil {
         }
     }
 
+    // refreshToken으로부터 email을 추출하는 메서드
     public String getEmailFromToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
