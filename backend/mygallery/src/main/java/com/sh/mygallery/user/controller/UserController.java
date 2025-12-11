@@ -3,15 +3,15 @@ package com.sh.mygallery.user.controller;
 import com.sh.mygallery.user.domain.User;
 import com.sh.mygallery.user.dto.UserDTO;
 import com.sh.mygallery.user.service.UserService;
+import com.sh.mygallery.util.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +28,7 @@ import java.util.Map;
 public class UserController {
     // 알맞은 service객체 보유
     private final UserService userService;
+    private final JwtUtil jwtUtil;
     /**
      * 유저의 회원가입을 담당하는 메서드
      *
@@ -86,5 +87,45 @@ public class UserController {
                 // accessToken은 일반적으로 JS가 Authorization 헤더에 직접 실어 사용해야 하기 때문에
                 // 쿠키가 아닌 응답 body로 제공
                 .body(Map.of("accessToken", accessToken));
+    }
+
+    /**
+     * <p>시간이 만료된 accessToken이 존재하는 경우 refreshToken을 재검증하여
+     * 자동으로 accessToken을 재발급 해 주는 메서드</p>
+     *
+     * @param request HttpServletRequest 객체. 클라이언트가 보낸 쿠키에서 Refresh Token을 추출하는 데 사용됨.
+     * @return 새로운 Access Token을 포함한 Map 객체. ("accessToken" 키에 재발급된 토큰이 들어있음)
+     * @since 2025-12-11
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refreshAccessToken(HttpServletRequest request) {
+        // 클라이언트 요청에 포함된 모든 쿠키를 가져옴
+        Cookie[] cookies = request.getCookies();
+        // 쿠키에서 refreshToken 값을 저장할 변수 초기화
+        String refreshToken = null;
+
+        // 쿠키가 존재할 경우에만 반복문 실행
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                // 쿠키 이름이 "refreshToken"인 경우를 찾음
+                if ("refreshToken".equals(cookie.getName())) {
+                    // refreshToken 값을 변수에 저장
+                    refreshToken = cookie.getValue();
+                    //찾은 경우 반복문 종료
+                    break;
+                }
+            }
+        }
+
+        if (refreshToken != null && jwtUtil.validateRefreshToken(refreshToken)) {
+            // refreshToken이 존재하고 유효한 토큰인지 검증
+            String email = jwtUtil.getEmailFromToken(refreshToken);
+            // 토큰에서 email(사용자 식별자) 추출, 해당 email로 새로운 Access Token 생성
+            String newAccessToken = jwtUtil.createAccessToken(email);
+            // HTTP 200 OK와 함께 새로운 Access Token을 응답
+            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        }
+        // 토큰이 없거나 유효하지 않으면 HTTP 401(Unauthorized)과 오류 메시지 반환
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "유효하지 않은 토큰입니다."));
     }
 }

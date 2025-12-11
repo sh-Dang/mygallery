@@ -27,5 +27,4 @@ public interface UserRepository extends JpaRepository<User,Long> {
      * @since 2025-12-07
      */
     Optional<User> findByEmail(String email);
-
 }

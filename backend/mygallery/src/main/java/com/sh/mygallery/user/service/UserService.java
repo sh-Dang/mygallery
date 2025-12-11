@@ -6,12 +6,13 @@ import com.sh.mygallery.user.exception.UserException;
 import com.sh.mygallery.user.repository.UserRepository;
 import com.sh.mygallery.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
     /**
      * 유저의 회원가입을 담당하는 메서드
      *
@@ -76,27 +78,33 @@ public class UserService {
      * @since 2025-12-07
      */
     public Map<String,String> login(String email, String password) {
-        // email을 기준으로 DB에서 User 엔티티 탐색.
-        // 값이 없으면 UserNotFoundException을 발생시켜 로그인 실패 처리.
+        // email을 기준으로 DB에서 User 엔티티 탐색
+        // 값이 없으면 UserNotFoundException을 발생시켜 로그인 실패 처리
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
 
-        // 입력된 password(평문)와 DB에 저장된 암호화된 비밀번호가 일치하는지 검증.
-        // matches()는 BCryptPasswordEncoder에 의해 암호 비교를 수행.
-        // 일치하지 않으면 BadCredentialsException을 던져 인증 실패 처리.
+        // 입력된 password(평문)와 DB에 저장된 암호화된 비밀번호가 일치하는지 검증
+        // matches()는 BCryptPasswordEncoder에 의해 암호 비교를 수행
+        // 일치하지 않으면 BadCredentialsException을 던져 인증 실패 처리
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
-        // 모든 검증이 통과된 경우, username을 기반으로 JWT Access Token 생성.
-        // 이 토큰은 이후 인증된 사용자임을 증명하는 데 사용됨.
-//        return jwtUtil.createAccessToken(email);
+        // 모든 검증이 통과된 경우, username을 기반으로 JWT Access Token 생성
+        // 이 토큰은 이후 인증된 사용자임을 증명하는 데 사용
         String accessToken = jwtUtil.createAccessToken(email);
-        String refreshToke = jwtUtil.createRefreshToken(email);
+        String refreshToken = jwtUtil.createRefreshToken(email);
+
+        // Redis에 Refresh Token을 저장
+        redisTemplate.opsForValue().set(
+                email, // key : Redis에 저장할 키, 여기서는 사용자의 이메일
+                refreshToken, // value : 저장할 값, 여기서는 refreshToken
+                Duration.ofDays(7) // TTL(Time To Live):7일 설정
+        );
 
         return Map.of(
                 "accessToken", accessToken,
-                "refreshToken", refreshToke
+                "refreshToken", refreshToken
         );
     }
 }

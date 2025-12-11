@@ -1,9 +1,12 @@
 package com.sh.mygallery.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -20,10 +23,12 @@ import java.util.UUID;
  * @since 2025-12-04
  */
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
 
     // 알고리즘에 사용할 SecretKey (application.properties에서 주입)
     private final SecretKey secretKey;
+    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 생성자에서 application.properties의 비밀키 문자열을 받아서
@@ -31,9 +36,10 @@ public class JwtUtil {
      *
      * @param secretKey application.properties의 jwt.signature.secretkey 값
      */
-    public JwtUtil(@Value("${jwt.signature.secretkey}") String secretKey) {
+    public JwtUtil(@Value("${jwt.signature.secretkey}") String secretKey, RedisTemplate<String, String> redisTemplate) {
         // Keys.hmacShaKeyFor(): 문자열을 바이트 배열로 변환하여 HMAC-SHA 알고리즘용 SecretKey 객체 생성
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+        this.redisTemplate = redisTemplate;
     }
 
     // accessToken을 생성하는 메서드
@@ -48,10 +54,13 @@ public class JwtUtil {
     }
 
     // accessToken 검증로직을 담고있는 메서드
-    private Boolean validateAccessToken(String token){
-        // 값을 최초에 false로 초기화 유효하지 않은 정보에 대한 인증방지
-        boolean isAccessTokenAvailable = false;
-        return isAccessTokenAvailable;
+    public Boolean validateAccessToken(String token){
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // refreshToken을 생성하는 메서드
@@ -67,10 +76,29 @@ public class JwtUtil {
     }
 
     // refreshToken 검증로직을 담고있는 메서드
-    private Boolean validateRefreshToken(String token){
-        // 값을 최초에 false로 초기화 유효하지 않은 정보에 대한 인증방지
-        boolean isRefreshTokenAvailable = false;
-        return isRefreshTokenAvailable;
+    public Boolean validateRefreshToken(String token){
+        try {
+            // 1. 토큰 파싱
+            Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+            String email = claims.getSubject();
+
+            // 2. Redis에서 저장된 Refresh Token 조회
+            String storedToken = redisTemplate.opsForValue().get(email);
+
+            // 3. 토큰 비교
+            return token.equals(storedToken);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String getEmailFromToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+            return claims.getSubject();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }
