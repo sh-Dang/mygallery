@@ -1,4 +1,4 @@
-package com.sh.mygallery.user.domain;
+package com.sh.mygallery.domain.user.domain;
 
 import jakarta.persistence.*;
 

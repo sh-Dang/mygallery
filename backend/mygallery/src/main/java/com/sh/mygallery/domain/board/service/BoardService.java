@@ -1,7 +1,7 @@
-package com.sh.mygallery.board.service;
+package com.sh.mygallery.domain.board.service;
 
-import com.sh.mygallery.board.domain.Board;
-import com.sh.mygallery.board.repository.BoardRepository;
+import com.sh.mygallery.domain.board.domain.Board;
+import com.sh.mygallery.domain.board.repository.BoardRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

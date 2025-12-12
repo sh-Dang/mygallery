@@ -1,9 +1,9 @@
-package com.sh.mygallery.user.service;
+package com.sh.mygallery.domain.user.service;
 
-import com.sh.mygallery.user.domain.User;
-import com.sh.mygallery.user.dto.UserDTO;
-import com.sh.mygallery.user.exception.UserException;
-import com.sh.mygallery.user.repository.UserRepository;
+import com.sh.mygallery.domain.user.domain.User;
+import com.sh.mygallery.domain.user.dto.UserDTO;
+import com.sh.mygallery.domain.user.exception.UserException;
+import com.sh.mygallery.domain.user.repository.UserRepository;
 import com.sh.mygallery.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

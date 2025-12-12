@@ -1,4 +1,4 @@
-package com.sh.mygallery.user.exception;
+package com.sh.mygallery.domain.user.exception;
 
 /**
  * User와 관련된 모든 예외(Exception)을 처리해 줄 객체

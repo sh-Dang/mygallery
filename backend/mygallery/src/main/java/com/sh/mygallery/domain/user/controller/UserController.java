@@ -1,8 +1,8 @@
-package com.sh.mygallery.user.controller;
+package com.sh.mygallery.domain.user.controller;
 
-import com.sh.mygallery.user.domain.User;
-import com.sh.mygallery.user.dto.UserDTO;
-import com.sh.mygallery.user.service.UserService;
+import com.sh.mygallery.domain.user.domain.User;
+import com.sh.mygallery.domain.user.dto.UserDTO;
+import com.sh.mygallery.domain.user.service.UserService;
 import com.sh.mygallery.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

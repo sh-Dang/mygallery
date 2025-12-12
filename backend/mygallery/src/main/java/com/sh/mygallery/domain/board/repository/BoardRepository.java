@@ -1,7 +1,6 @@
-package com.sh.mygallery.board.repository;
+package com.sh.mygallery.domain.board.repository;
 
-import com.sh.mygallery.board.domain.Board;
-import com.sh.mygallery.user.domain.User;
+import com.sh.mygallery.domain.board.domain.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

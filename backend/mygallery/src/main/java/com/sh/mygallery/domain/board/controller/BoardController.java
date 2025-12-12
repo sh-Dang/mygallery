@@ -1,8 +1,7 @@
-package com.sh.mygallery.board.controller;
+package com.sh.mygallery.domain.board.controller;
 
-import com.sh.mygallery.board.domain.Board;
-import com.sh.mygallery.board.service.BoardService;
-import com.sh.mygallery.user.service.UserService;
+import com.sh.mygallery.domain.board.domain.Board;
+import com.sh.mygallery.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

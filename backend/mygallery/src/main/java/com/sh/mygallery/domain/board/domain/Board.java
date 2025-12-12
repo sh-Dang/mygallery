@@ -1,6 +1,6 @@
-package com.sh.mygallery.board.domain;
+package com.sh.mygallery.domain.board.domain;
 
-import com.sh.mygallery.user.domain.User;
+import com.sh.mygallery.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
