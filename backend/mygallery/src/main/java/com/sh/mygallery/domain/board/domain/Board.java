@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * boards table에 매칭할 엔터티 선언
@@ -49,4 +51,14 @@ public class Board {
     // 조회수
     @Column(name="view_count")
     private int viewCount;
+
+    // 이미지 리스트
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<com.sh.mygallery.domain.image.domain.Image> images = new ArrayList<>();
+
+    // 연관관계 편의 메소드
+    public void addImage(com.sh.mygallery.domain.image.domain.Image image) {
+        images.add(image);
+        image.setBoard(this);
+    }
 }
