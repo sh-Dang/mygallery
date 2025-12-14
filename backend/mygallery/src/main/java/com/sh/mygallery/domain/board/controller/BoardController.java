@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/boards")
+@RequestMapping("/api/boards")
 public class BoardController {
     // 알맞은 service객체 보유
     private final BoardService boardService;
