@@ -30,7 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final com.sh.mygallery.domain.refreshtoken.service.RefreshTokenService refreshTokenService;
     /**
      * 유저의 회원가입을 담당하는 메서드
      *
@@ -93,14 +93,8 @@ public class UserService {
         // 모든 검증이 통과된 경우, username을 기반으로 JWT Access Token 생성
         // 이 토큰은 이후 인증된 사용자임을 증명하는 데 사용
         String accessToken = jwtUtil.createAccessToken(email);
-        String refreshToken = jwtUtil.createRefreshToken(email);
-
-        // Redis에 Refresh Token을 저장
-        redisTemplate.opsForValue().set(
-                email, // key : Redis에 저장할 키, 여기서는 사용자의 이메일
-                refreshToken, // value : 저장할 값, 여기서는 refreshToken
-                Duration.ofDays(7) // TTL(Time To Live):7일 설정
-        );
+        // RefreshTokenService를 통해 리프레시 토큰 발급 및 저장
+        String refreshToken = refreshTokenService.issueRefreshToken(email);
 
         return Map.of(
                 "accessToken", accessToken,

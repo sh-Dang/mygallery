@@ -28,7 +28,6 @@ public class JwtUtil {
 
     // 알고리즘에 사용할 SecretKey (application.properties에서 주입)
     private final SecretKey secretKey;
-    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 생성자에서 application.properties의 비밀키 문자열을 받아서
@@ -36,10 +35,9 @@ public class JwtUtil {
      *
      * @param secretKey application.properties의 jwt.signature.secretkey 값
      */
-    public JwtUtil(@Value("${jwt.signature.secretkey}") String secretKey, RedisTemplate<String, String> redisTemplate) {
+    public JwtUtil(@Value("${jwt.signature.secretkey}") String secretKey) {
         // Keys.hmacShaKeyFor(): 문자열을 바이트 배열로 변환하여 HMAC-SHA 알고리즘용 SecretKey 객체 생성
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-        this.redisTemplate = redisTemplate;
     }
 
     // accessToken을 생성하는 메서드
@@ -73,23 +71,6 @@ public class JwtUtil {
                 .signWith(secretKey) // secretKey로 토큰에 서명 (토큰의 위변조 방지)
                 .compact(); // 최종: JWT 문자열로 압축하여 생성
         return refreshToken;
-    }
-
-    // refreshToken 검증로직을 담고있는 메서드
-    public Boolean validateRefreshToken(String token){
-        try {
-            // 1. 토큰 파싱
-            Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
-            String email = claims.getSubject();
-
-            // 2. Redis에서 저장된 Refresh Token 조회
-            String storedToken = redisTemplate.opsForValue().get(email);
-
-            // 3. 토큰 비교
-            return token.equals(storedToken);
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     // refreshToken으로부터 email을 추출하는 메서드

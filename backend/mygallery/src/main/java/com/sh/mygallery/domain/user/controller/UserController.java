@@ -1,9 +1,9 @@
 package com.sh.mygallery.domain.user.controller;
 
+import com.sh.mygallery.domain.refreshtoken.service.RefreshTokenService;
 import com.sh.mygallery.domain.user.domain.User;
 import com.sh.mygallery.domain.user.dto.UserDTO;
 import com.sh.mygallery.domain.user.service.UserService;
-import com.sh.mygallery.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class UserController {
     // 알맞은 service객체 보유
     private final UserService userService;
-    private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
     /**
      * 유저의 회원가입을 담당하는 메서드
      *
@@ -116,15 +116,16 @@ public class UserController {
             }
         }
 
-        if (refreshToken != null && jwtUtil.validateRefreshToken(refreshToken)) {
-            // refreshToken이 존재하고 유효한 토큰인지 검증
-            String email = jwtUtil.getEmailFromToken(refreshToken);
-            // 토큰에서 email(사용자 식별자) 추출, 해당 email로 새로운 Access Token 생성
-            String newAccessToken = jwtUtil.createAccessToken(email);
-            // HTTP 200 OK와 함께 새로운 Access Token을 응답
-            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "RefreshToken을 찾을 수 없습니다."));
         }
-        // 토큰이 없거나 유효하지 않으면 HTTP 401(Unauthorized)과 오류 메시지 반환
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "유효하지 않은 토큰입니다."));
+
+        try {
+            String newAccessToken = refreshTokenService.refreshAccessToken(refreshToken);
+            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "유효하지 않은 토큰입니다."));
+        }
     }
 }
+
