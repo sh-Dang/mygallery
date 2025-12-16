@@ -7,6 +7,19 @@ package com.sh.mygallery.domain.user.exception;
  * @since 2025-11-30
  */
 public class UserException extends RuntimeException {
-    public UserException(String s) {
+    public UserException() {
+        super();
+    }
+
+    public UserException(String message) {
+        super(message);
+    }
+
+    public UserException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UserException(Throwable cause) {
+        super(cause);
     }
 }
