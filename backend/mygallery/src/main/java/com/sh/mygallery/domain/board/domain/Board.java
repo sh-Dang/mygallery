@@ -46,6 +46,7 @@ public class Board {
     // 작성자(fk)
     @ManyToOne(fetch = FetchType.LAZY) // 지연 로딩으로 설정
     @JoinColumn(name = "user_id") // 외래키 컬럼명 지정
+    @Setter
     private User user;
 
     // 조회수

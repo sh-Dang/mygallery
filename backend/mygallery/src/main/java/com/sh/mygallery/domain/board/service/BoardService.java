@@ -1,12 +1,17 @@
 package com.sh.mygallery.domain.board.service;
 
 import com.sh.mygallery.domain.board.domain.Board;
+import com.sh.mygallery.domain.board.exception.NoTitleException;
+import com.sh.mygallery.domain.board.exception.NotUserException;
 import com.sh.mygallery.domain.board.repository.BoardRepository;
+import com.sh.mygallery.domain.user.domain.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * controller의 요청을 받아 올바른 Repository로 요청을 전달해 주기위한 객체
@@ -46,6 +51,12 @@ public class BoardService {
      * @return 저장된 게시글
      */
     public Board write(Board board){
+        if (!StringUtils.hasText(board.getTitle())) {
+            throw new NoTitleException("게시글의 제목은 필수입니다.");
+        }
+        if (board.getUser() == null) {
+            throw new NotUserException("로그인하지 않은 사용자는 게시글을 작성할 수 없습니다.");
+        }
         return boardRepository.save(board);
     }
 
@@ -54,12 +65,22 @@ public class BoardService {
      *
      * @param id 수정할 게시글 ID
      * @param board 수정할 내용
+     * @param user 현재 로그인한 사용자
      * @return 수정된 게시글
      */
     @Transactional
-    public Board update(Long id, Board board) {
+    public Board update(Long id, Board board, User user) {
+        if (!StringUtils.hasText(board.getTitle())) {
+            throw new NoTitleException("게시글의 제목은 필수입니다.");
+        }
+
         Board existingBoard = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다. id=" + id));
+
+        if (!Objects.equals(existingBoard.getUser().getUserId(), user.getUserId())) {
+            throw new NotUserException("게시글을 수정할 권한이 없습니다.");
+        }
+
         existingBoard.setTitle(board.getTitle());
         existingBoard.setContent(board.getContent());
 
@@ -70,11 +91,15 @@ public class BoardService {
      * 게시글을 삭제하는 메서드
      *
      * @param id 삭제할 게시글 ID
+     * @param user 현재 로그인한 사용자
      */
     @Transactional
-    public void delete(Long id) {
-        if (!boardRepository.existsById(id)) {
-            throw new IllegalArgumentException("해당 게시글을 찾을 수 없습니다. id=" + id);
+    public void delete(Long id, User user) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다. id=" + id));
+
+        if (!Objects.equals(board.getUser().getUserId(), user.getUserId())) {
+            throw new NotUserException("게시글을 삭제할 권한이 없습니다.");
         }
         boardRepository.deleteById(id);
     }

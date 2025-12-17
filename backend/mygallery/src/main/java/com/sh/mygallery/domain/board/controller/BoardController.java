@@ -2,8 +2,10 @@ package com.sh.mygallery.domain.board.controller;
 
 import com.sh.mygallery.domain.board.domain.Board;
 import com.sh.mygallery.domain.board.service.BoardService;
+import com.sh.mygallery.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +32,8 @@ public class BoardController {
      * @return 생성된 Board 정보를 ResponseEntity로 래핑하여 반환
      */
     @PostMapping
-    public ResponseEntity<Board> write(@RequestBody Board board) {
+    public ResponseEntity<Board> write(@RequestBody Board board, @AuthenticationPrincipal User user) {
+        board.setUser(user);
         Board createdBoard = boardService.write(board);
         return ResponseEntity.ok(createdBoard);
     }
@@ -66,8 +69,8 @@ public class BoardController {
      * @return 수정된 Board 정보를 ResponseEntity로 래핑하여 반환
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Board> update(@PathVariable Long id, @RequestBody Board board){
-        Board updatedBoard = boardService.update(id, board);
+    public ResponseEntity<Board> update(@PathVariable Long id, @RequestBody Board board, @AuthenticationPrincipal User user){
+        Board updatedBoard = boardService.update(id, board, user);
         return ResponseEntity.ok(updatedBoard);
     }
 
@@ -78,8 +81,8 @@ public class BoardController {
      * @return 삭제 성공 여부를 포함한 응답
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        boardService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal User user){
+        boardService.delete(id, user);
         return ResponseEntity.noContent().build();
     }
 }
