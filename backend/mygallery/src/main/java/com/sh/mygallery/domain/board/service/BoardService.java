@@ -51,12 +51,21 @@ public class BoardService {
      * @return 저장된 게시글
      */
     public Board write(Board board){
+        // 제목 유효성 검사
+        // hasText() -> null, 빈 문자열, 공백만 있는 문자열을 허용하지 않음
         if (!StringUtils.hasText(board.getTitle())) {
             throw new NoTitleException("게시글의 제목은 필수입니다.");
         }
+
+        // 사용자(작성자) 존재 여부 검증
+        // 로그인하지 않은 사용자가 게시글을 작성하는 것을 방지
         if (board.getUser() == null) {
             throw new NotUserException("로그인하지 않은 사용자는 게시글을 작성할 수 없습니다.");
         }
+
+        // 게시글 저장
+        // 새로운 게시글이므로 INSERT 수행
+        // 저장 후 생성된 식별자(ID)가 포함된 엔티티를 반환해 줌
         return boardRepository.save(board);
     }
 
@@ -70,20 +79,28 @@ public class BoardService {
      */
     @Transactional
     public Board update(Long id, Board board, User user) {
+        // 제목 유효성 검사
+        // hasText() -> null, 빈 문자열, 공백만 있는 문자열을 허용하지 않음
         if (!StringUtils.hasText(board.getTitle())) {
             throw new NoTitleException("게시글의 제목은 필수입니다.");
         }
 
+        // 수정 대상 게시글 조회
+        // 존재하지 않는 게시글에 대한 수정 요청을 방지
+        // Optional을 사용하여 조회 실패 시 즉시 예외 발생
         Board existingBoard = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다. id=" + id));
 
+        // 게시글 작성자와 현재 로그인한 사용자가 동일한지 확인
         if (!Objects.equals(existingBoard.getUser().getUserId(), user.getUserId())) {
             throw new NotUserException("게시글을 수정할 권한이 없습니다.");
         }
 
+        // 게시글 내용 수정
         existingBoard.setTitle(board.getTitle());
         existingBoard.setContent(board.getContent());
 
+        // 변경 내용 저장 및 반환
         return boardRepository.save(existingBoard);
     }
 

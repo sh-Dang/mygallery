@@ -2,10 +2,7 @@ package com.sh.mygallery.domain.image.domain;
 
 import com.sh.mygallery.domain.board.domain.Board;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 게시글(Board)에 첨부되는 이미지 정보를 관리하는 JPA 엔티티.
@@ -16,6 +13,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Image {
     //이미지 식별자 (PK)
