@@ -112,9 +112,11 @@ public class BoardService {
      */
     @Transactional
     public void delete(Long id, User user) {
+        // 실제 board의 data가 존재하는지 조회
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다. id=" + id));
 
+        // 게시글 작성자와 현재 로그인한 사용자가 동일한지 확인
         if (!Objects.equals(board.getUser().getUserId(), user.getUserId())) {
             throw new NotUserException("게시글을 삭제할 권한이 없습니다.");
         }

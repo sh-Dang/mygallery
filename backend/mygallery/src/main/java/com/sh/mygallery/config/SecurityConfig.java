@@ -4,7 +4,8 @@ import com.sh.mygallery.filter.JwtRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -39,6 +40,20 @@ public class SecurityConfig {
     }
 
     /**
+     * Spring Security가 내부적으로 생성한 AuthenticationManager를
+     * 애플리케이션에서 주입받아 사용할 수 있도록 Bean으로 등록한다.
+     *
+     * @param authenticationConfiguration Spring Security 인증 설정 정보를 담고 있는 객체
+     * @return Security 설정을 기반으로 생성된 AuthenticationManager
+     * @throws Exception AuthenticationManager 생성 과정에서 예외가 발생할 수 있음
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+
+    /**
      * Spring Security의 보안 필터 체인 설정
      *
      * @param http HTTP보안 설정 객체
@@ -65,7 +80,7 @@ public class SecurityConfig {
                 }))
                 // URL 권한 규칙
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll() // 누구나 접근 가능
+                        .requestMatchers("/", "/user/login", "/user/register", "/user/check-email").permitAll() // 누구나 접근 가능
                         .requestMatchers("/user/mypage").authenticated() // JWT 필요
                         .anyRequest().permitAll()
                 )

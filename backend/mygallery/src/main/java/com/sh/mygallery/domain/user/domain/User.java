@@ -6,9 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -23,7 +27,7 @@ import java.util.Date;
 @Builder // 필드가 많아도 가독성 있게 객체 생성 가능(순서 의존성 제거, 선택적 값 설정에 유리) new 대용
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails {
     /**
      * 기본 키(PK)로 사용되는 식별자(ID) 필드.
      * Id
@@ -71,4 +75,40 @@ public class User {
     // 최종 수정 날짜
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role));
+    }
+
+    /**
+     * UserDetails의 getUsername은 PK를 반환해야함
+     * 우리는 email을 ID로 쓸거라서 email을 반환
+     *
+     * @return email
+     */
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

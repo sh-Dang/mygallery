@@ -15,23 +15,25 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name="board_images")
 public class Image {
     //이미지 식별자 (PK)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="image_id")
     private Long id;
 
     // 업로드 당시의 원본 파일명
     // 사용자에게 보여줄 용도
-    @Column(nullable = false)
+    @Column(nullable = false, name = "origin_name")
     private String originalFileName;
 
     // 서버에 실제로 저장된 파일명(중복 방지를 위한 UUID사용)
-    @Column(nullable = false)
-    private String storedFileName;
+    @Column(nullable = false, name = "saved_name")
+    private String savedFileName;
 
     // 파일이 저장된 경로
-    @Column(nullable = false)
+    @Column(nullable = false, name = "image_url")
     private String filePath;
 
     // 이미지가 소속된 게시글
@@ -46,7 +48,7 @@ public class Image {
     @Builder
     public Image(String originalFileName, String storedFileName, String filePath) {
         this.originalFileName = originalFileName;
-        this.storedFileName = storedFileName;
+        this.savedFileName = storedFileName;
         this.filePath = filePath;
     }
 }

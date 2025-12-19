@@ -70,6 +70,7 @@ public class BoardController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Board> update(@PathVariable Long id, @RequestBody Board board, @AuthenticationPrincipal User user){
+        // board 한 건을 업데이트 검증로직은 서비스 내부에서 구현
         Board updatedBoard = boardService.update(id, board, user);
         return ResponseEntity.ok(updatedBoard);
     }

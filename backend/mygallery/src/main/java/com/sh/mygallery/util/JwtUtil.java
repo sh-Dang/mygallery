@@ -2,11 +2,8 @@ package com.sh.mygallery.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -23,7 +20,6 @@ import java.util.UUID;
  * @since 2025-12-04
  */
 @Component
-@RequiredArgsConstructor
 public class JwtUtil {
 
     // 알고리즘에 사용할 SecretKey (application.properties에서 주입)
@@ -54,9 +50,14 @@ public class JwtUtil {
     // accessToken 검증로직을 담고있는 메서드
     public Boolean validateAccessToken(String token){
         try {
+            // 서명 검증, 만료 시간 검증 등이
+            // JJWT 라이브러리 내부 로직으로 수행됨
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+
+            // 유효한 Token인 경우 true 반환
             return true;
         } catch (Exception e) {
+            // 하나라도 예외 발생 시 false
             return false;
         }
     }

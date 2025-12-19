@@ -4,6 +4,7 @@ import com.sh.mygallery.domain.refreshtoken.service.RefreshTokenService;
 import com.sh.mygallery.domain.user.domain.User;
 import com.sh.mygallery.domain.user.dto.UserDTO;
 import com.sh.mygallery.domain.user.service.UserService;
+import com.sh.mygallery.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -28,6 +31,8 @@ public class UserController {
     // 알맞은 service객체 보유
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
     /**
      * 유저의 회원가입을 담당하는 메서드
      *
@@ -56,12 +61,15 @@ public class UserController {
      */
     @PostMapping("/login") // "/user/login"으로 들어오는 요청을 받아들임
     public ResponseEntity<Map<String, String>> login(@RequestBody UserDTO.UserLoginRequest loginRequest){ // 요청 본문을 UserLoginRequest DTO로 바인딩 (JSON -> 객체)
-        Map<String, String> tokens = userService.login( // UserService의 login 메서드를 호출하여 인증을 수행하고 JWT 토큰을 발급받음
-                loginRequest.getUsername(), // DTO에서 username을 추출하여 전달 (이메일)
-                loginRequest.getPassword()); // DTO에서 password(평문)를 추출하여 전달 — 절대 로그에 남기지 말 것
+        // Spring Security AuthenticationManager를 사용하여 사용자 인증
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+        );
 
-        String accessToken = tokens.get("accessToken"); // 반환받은 토큰들 중 accessToken추출
-        String refreshToken = tokens.get("refreshToken"); // 반환받은 토큰들 중 refreshToken 추출
+        // 인증 성공 후 토큰 생성
+        String accessToken = jwtUtil.createAccessToken(loginRequest.getUsername()); // DTO에서 username을 추출하여 전달 (이메일)
+        String refreshToken = refreshTokenService.issueRefreshToken(loginRequest.getUsername()); // DTO에서 password(평문)를 추출하여 전달 — 절대 로그에 남기지 말 것
+
 
         // refreshToken → HttpOnly 쿠키에 저장
         // 왜 Service가 아닌 Controller에서 쿠키에 저장하는가?
